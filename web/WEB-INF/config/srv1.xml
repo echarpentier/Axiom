@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+ 
+<properties>
+	<!-- Database -->
+		<entry key="JDBCDriver">com.mysql.jdbc.Driver</entry>
+		<entry key="JDBCConnectionURL">jdbc:mysql://localhost/Axiom_db</entry>
+		<entry key="DBlogin">eric</entry>
+		<entry key="DBpassword">c071440e1</entry>
+		<entry key="ConnectionPoolSize">5</entry>
+		<entry key="ConnectionPoolMax">50</entry>
+		<entry key="AxiomPathReplacementInDB">__AXIOMPATH__</entry>
+		<entry key="DataPathReplacementInDB">__DATAPATH__</entry>
+		
+	<!-- Number of threads authorized -->
+		<entry key="MaxQCAnalysis">1</entry>
+		<entry key="MaxGenoAnalysis">4</entry>
+		
+	<!-- Data Path -->
+		<entry key="DataPath">/commun/data/projects/Axiom</entry>
+		
+	<!-- Main Application Path -->
+		<entry key="AxiomPath">/commun/data/users/echarpentier/Axiom</entry>
+		
+		<!-- Application Paths under main application path -->
+      	  	<entry key="AxiomPath.ArrayImagePath">App/ArrayImages</entry>
+      	  	<entry key="AxiomPath.ImageNotFoundPath">App/INF.jpg</entry>
+        	<entry key="AxiomPath.AnalysisPath">App/Analysis</entry>
+        
+		<!-- Affymetrix Library Files -->
+			<!-- <entry key="AxiomPath.AffxLibraryFiles">Apt/axiomgwas_husnp_1_r4</entry> -->
+			<entry key="AxiomPath.AffxLibraryFilesFolder">Apt/LibraryFiles</entry>
+		
+		<!-- Affymetrix Annotation Files -->
+			<!-- <entry key="AxiomPath.AffxAnnotationFile">Apt/Axiom_GW_Hu_SNP.na32.annot.csv</entry> -->
+			<entry key="AxiomPath.AffxAnnotationFilesFolder">Apt/AnnotationFiles</entry>
+			
+		<!-- R Scripts Folder -->
+			<entry key="AxiomPath.Rscripts">App/R_scripts</entry>
+			
+		<!-- Database Creation File -->
+			<entry key="AxiomPath.DatabaseCreationFile">App/axiom.sql</entry>
+			
+		<!-- Temporary Folder -->
+			<entry key="AxiomPath.temporaryFolder">App/tmp</entry>
+		
+	<!-- APT Bin Folder -->
+		<entry key="APTbinPath">/commun/data/users/echarpentier/Axiom/Apt/apt-1.15.1-x86_64-intel-linux/bin</entry>
+		
+	<!-- Rscript Bin Folder -->
+		<entry key="RscriptBinPath">/usr/local/bin/Rscript</entry>
+</properties>

@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+    <!--          -->
+    <!--APP PARAMS-->
+    <!--          -->
+    <!--Database-->
+    <context-param>
+        <param-name>configurationFile</param-name>
+        <param-value>ericPc.xml</param-value>
+    </context-param>
+	    
+
+    <!--                -->
+    <!--CONTEXT LISTENER-->
+    <!--                --> 
+    
+    <listener>
+        <listener-class>fr.pfgen.axiom.server.servlets.AxiomContextListener</listener-class>
+    </listener>
+  
+ 
+
+    <!--            -->
+    <!--RPC SERVICES-->
+    <!--            -->
+	
+    <servlet>
+        <servlet-name>loginService</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.services.LoginServiceImpl</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>loginService</servlet-name>
+        <url-pattern>/Axiom/loginService</url-pattern>
+    </servlet-mapping>
+  
+    <!-- -->
+  
+    <servlet>
+        <servlet-name>populationService</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.services.PopulationsServiceImpl</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>populationService</servlet-name>
+        <url-pattern>/Axiom/PopulationsService</url-pattern>
+    </servlet-mapping>
+  
+    <!-- -->  
+  
+    <servlet>
+        <servlet-name>updateDatabaseService</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.services.UpdateDatabaseServiceImpl</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>updateDatabaseService</servlet-name>
+        <url-pattern>/Axiom/UpdateDatabaseService</url-pattern>
+    </servlet-mapping>
+  
+    <!-- -->
+  
+    <servlet>
+        <servlet-name>platesService</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.services.PlatesServiceImpl</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>platesService</servlet-name>
+        <url-pattern>/Axiom/PlatesService</url-pattern>
+    </servlet-mapping>
+  
+    <!-- -->
+  
+    <servlet>
+        <servlet-name>samplesService</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.services.SamplesServiceImpl</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>samplesService</servlet-name>
+        <url-pattern>/Axiom/SamplesService</url-pattern>
+    </servlet-mapping>
+  
+    <!-- -->
+  
+    <servlet>
+        <servlet-name>arrayImagesService</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.services.ArrayImagesServiceImpl</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>arrayImagesService</servlet-name>
+        <url-pattern>/Axiom/ArrayImagesService</url-pattern>
+    </servlet-mapping>
+  
+    <!-- -->
+  	 
+    <servlet>
+        <servlet-name>QCService</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.services.QCServiceImpl</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>QCService</servlet-name>
+        <url-pattern>/Axiom/QCService</url-pattern>
+    </servlet-mapping>
+  
+    <!-- -->
+  	 
+    <servlet>
+        <servlet-name>GenotypingService</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.services.GenotypingServiceImpl</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>GenotypingService</servlet-name>
+        <url-pattern>/Axiom/GenotypingService</url-pattern>
+    </servlet-mapping>
+  
+    <!-- -->
+  	 
+    <servlet>
+        <servlet-name>UsersService</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.services.UsersServiceImpl</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>UsersService</servlet-name>
+        <url-pattern>/Axiom/UsersService</url-pattern>
+    </servlet-mapping>
+  
+    <!-- -->
+  	 
+    <servlet>
+        <servlet-name>SamplesQCService</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.services.SamplesQCServiceImpl</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>SamplesQCService</servlet-name>
+        <url-pattern>/Axiom/SamplesQCService</url-pattern>
+    </servlet-mapping>
+  
+    <!-- -->
+  	 
+    <servlet>
+        <servlet-name>GenotypingAnalysisService</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.services.GenotypingAnalysisServiceImpl</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>GenotypingAnalysisService</servlet-name>
+        <url-pattern>/Axiom/GenotypingAnalysisService</url-pattern>
+    </servlet-mapping>
+  
+    <!-- -->
+  	 
+    <servlet>
+        <servlet-name>GenotypingQCService</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.services.GenotypingQCServiceImpl</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>GenotypingQCService</servlet-name>
+        <url-pattern>/Axiom/GenotypingQCService</url-pattern>
+    </servlet-mapping>
+  
+    <!-- -->
+  	 
+    <servlet>
+        <servlet-name>DQCGraphService</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.services.CreateDQCGraphServiceImpl</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>DQCGraphService</servlet-name>
+        <url-pattern>/Axiom/DQCGraphService</url-pattern>
+    </servlet-mapping>
+  
+    <!-- -->
+  	 
+    <servlet>
+        <servlet-name>FilePathService</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.services.GetFilePathServiceImpl</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>FilePathService</servlet-name>
+        <url-pattern>/Axiom/FilePathService</url-pattern>
+    </servlet-mapping> 
+  
+    <!-- -->
+  	 
+    <servlet>
+        <servlet-name>StudiesService</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.services.StudiesServiceImpl</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>StudiesService</servlet-name>
+        <url-pattern>/Axiom/StudiesService</url-pattern>
+    </servlet-mapping> 
+  
+    <!-- -->
+  	 
+    <servlet>
+        <servlet-name>PedigreeService</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.services.PedigreeServiceImpl</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>PedigreeService</servlet-name>
+        <url-pattern>/Axiom/PedigreeService</url-pattern>
+    </servlet-mapping> 
+  
+    <!-- -->
+  	 
+    <servlet>
+        <servlet-name>SNPListsService</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.services.SNPListsServiceImpl</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>SNPListsService</servlet-name>
+        <url-pattern>/Axiom/SNPListsService</url-pattern>
+    </servlet-mapping>
+  
+    <!-- -->
+  	 
+    <servlet>
+        <servlet-name>AnnotationFilesService</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.services.AnnotationFilesServiceImpl</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>AnnotationFilesService</servlet-name>
+        <url-pattern>/Axiom/AnnotationFilesService</url-pattern>
+    </servlet-mapping>
+  
+    <!-- -->
+  	 
+    <servlet>
+        <servlet-name>LibraryFilesService</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.services.LibraryFilesServiceImpl</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>LibraryFilesService</servlet-name>
+        <url-pattern>/Axiom/LibraryFilesService</url-pattern>
+    </servlet-mapping>		
+  
+  
+    <!--        -->
+    <!--SERVLETS-->
+    <!--        -->
+  
+    <servlet>
+        <servlet-name>imageProvider</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.servlets.ImageProviderServlet</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>imageProvider</servlet-name>
+        <url-pattern>/Axiom/imageProvider</url-pattern>
+    </servlet-mapping>
+  
+    <!-- -->
+ 	 
+    <servlet>
+        <servlet-name>fileProvider</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.servlets.FileProviderServlet</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>fileProvider</servlet-name>
+        <url-pattern>/Axiom/fileProvider</url-pattern>
+    </servlet-mapping>
+  
+    <!-- -->
+ 	 
+    <servlet>
+        <servlet-name>fileUploader</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.servlets.FileUploaderServlet</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>fileUploader</servlet-name>
+        <url-pattern>/Axiom/fileUploader</url-pattern>
+    </servlet-mapping>
+  
+  
+    <!-- Default page to serve -->
+    <welcome-file-list>
+        <welcome-file>Axiom.html</welcome-file>
+    </welcome-file-list>
+
+</web-app>
