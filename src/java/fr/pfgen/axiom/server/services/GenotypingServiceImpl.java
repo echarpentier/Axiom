@@ -36,6 +36,11 @@ import fr.pfgen.axiom.server.utils.IOUtils;
 import fr.pfgen.axiom.server.utils.ServerUtils;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import fr.pfgen.axiom.server.database.UsersTable;
+import fr.pfgen.axiom.shared.records.RunningGenotypingAnalysis;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 @SuppressWarnings("serial")
 public class GenotypingServiceImpl extends RemoteServiceServlet implements GenotypingService {
@@ -44,6 +49,7 @@ public class GenotypingServiceImpl extends RemoteServiceServlet implements Genot
     private Hashtable<String, File> appFiles;
 
     @SuppressWarnings("unchecked")
+    @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         pool = (ConnectionPool) getServletContext().getAttribute("ConnectionPool");
@@ -202,14 +208,16 @@ public class GenotypingServiceImpl extends RemoteServiceServlet implements Genot
         private File annotationFile;
         private File libraryFilesFolder;
         private File xmlGenoConfigFile;
+        private RunningGenotypingAnalysis runningAnalysis;
 
-        public GenotypingThread(File finalAnalysisFolder, List<Integer> sampleIDList, String genotypingName, double dishQCLimit, double callRateLimit, int userID, String libraryFilesFolder, String annotationFile) {
+        public GenotypingThread(File finalAnalysisFolder, List<Integer> sampleIDList, String genotypingName, double dishQCLimit, double callRateLimit, int userID, String libraryFilesFolder, String annotationFile, RunningGenotypingAnalysis runningAnalysis) {
             this.finalAnalysisFolder = finalAnalysisFolder;
             this.sampleIDList = sampleIDList;
             this.genotypingName = genotypingName;
             this.dishQCLimit = dishQCLimit;
             this.callRateLimit = callRateLimit;
             this.userID = userID;
+            this.runningAnalysis = runningAnalysis;
             File libFilesFol = new File(appFiles.get("affymetrixLibraryFilesFolder"), libraryFilesFolder);
             if (!libFilesFol.exists() || !libFilesFol.canRead()) {
                 throw new RuntimeException("Cannot read " + libFilesFol.getAbsolutePath());
@@ -374,6 +382,7 @@ public class GenotypingServiceImpl extends RemoteServiceServlet implements Genot
                 } else {
                     logPW.println("Performing unique genotyping...");
                 }
+                runningAnalysis.setStatus(RunningGenotypingAnalysis.GenoAnaRunningStatus.FIRST);
                 File reportFile = new File(resultFolder, "AxiomGT1.report.txt");
                 File chpFolder = new File(resultFolder, "CHP");
                 if (!chpFolder.mkdir()) {
@@ -456,7 +465,7 @@ public class GenotypingServiceImpl extends RemoteServiceServlet implements Genot
                         celFilePW.close();
 
                         logPW.println("DONE\nPerforming second genotyping...");
-
+                        runningAnalysis.setStatus(RunningGenotypingAnalysis.GenoAnaRunningStatus.SECOND);
                         resultFolder = new File(finalAnalysisFolder, "Second_run");
                         if (!resultFolder.mkdir()) {
                             throw new RuntimeException("Cannot create " + resultFolder.getAbsolutePath());
@@ -511,6 +520,7 @@ public class GenotypingServiceImpl extends RemoteServiceServlet implements Genot
                 logPW.println("DONE");
 
                 logPW.println("Creating metrics.txt...");
+                runningAnalysis.setStatus(RunningGenotypingAnalysis.GenoAnaRunningStatus.METRICS);
                 String[] cmdMetrics = {appFiles.get("RScriptBin").getAbsolutePath(), appFiles.get("RScripts").getAbsolutePath() + "/CreateMetrics.R", resultFolder.getAbsolutePath() + "/AxiomGT1.snp-posteriors.txt", resultFolder.getAbsolutePath() + "/AxiomGT1.calls.txt", annotProbeFile.getAbsolutePath(), qc_report_folder.getAbsolutePath() + "/metrics.txt"};
                 procBuilder = new ProcessBuilder(cmdMetrics);
                 procBuilder.redirectErrorStream(true);
@@ -548,6 +558,8 @@ public class GenotypingServiceImpl extends RemoteServiceServlet implements Genot
                     ServerUtils.deleteDirectory(renamedCelsDir);
                 }
                 removeGenoAnalysisRunning();
+                runningAnalysis.setEndDate(new Date());
+                runningAnalysis.setStatus(RunningGenotypingAnalysis.GenoAnaRunningStatus.DONE);
             }
         }
 
@@ -561,11 +573,11 @@ public class GenotypingServiceImpl extends RemoteServiceServlet implements Genot
         }
 
         private void insertGenotypingQcInDB(LinkedHashMap<String, String> uniqueCelFiles, Map<String, String> changedCelFiles, File resultFolder, int genoAnalysisKey, String run) {
-
             GenoQcValuesTable.insertGenoQc(pool, uniqueCelFiles, changedCelFiles, resultFolder, genoAnalysisKey, run);
         }
     }
 
+    @Override
     public synchronized String performGenotyping(List<Integer> sampleIdList, String genotypingName, double dishQCLimit, double callRateLimit, int userID, String libraryFilesFolder, String annotationFile) {
 
         if (isMaxGenoAnalysisRunningNotReached()) {
@@ -583,7 +595,14 @@ public class GenotypingServiceImpl extends RemoteServiceServlet implements Genot
             finalAnalysisFolder.mkdir();
         }
 
-        GenotypingThread th = new GenotypingThread(finalAnalysisFolder, sampleIdList, genotypingName, dishQCLimit, callRateLimit, userID, libraryFilesFolder, annotationFile);
+        RunningGenotypingAnalysis runningAnalysis = new RunningGenotypingAnalysis();
+        runningAnalysis.setName(genotypingName);
+        runningAnalysis.setStartDate(new Date());
+        runningAnalysis.setStatus(RunningGenotypingAnalysis.GenoAnaRunningStatus.STARTING);
+        runningAnalysis.setUser(UsersTable.getUserNameFromId(pool, userID));
+        addRunningAnalysisToList(runningAnalysis);
+
+        GenotypingThread th = new GenotypingThread(finalAnalysisFolder, sampleIdList, genotypingName, dishQCLimit, callRateLimit, userID, libraryFilesFolder, annotationFile, runningAnalysis);
         th.start();
 
         return "Genotyping launched.\nGo to workflow tab to see its progress.";
@@ -613,7 +632,42 @@ public class GenotypingServiceImpl extends RemoteServiceServlet implements Genot
         getServletContext().setAttribute("GenoAnalysisRunning", nbAnalysisRunning--);
     }
 
+    @Override
     public List<String> getGenotypingNames() {
         return GenoAnalysisTable.getGenotypingNames(pool);
+    }
+
+    public List<RunningGenotypingAnalysis> getRunningGenoAnalysis() {
+        List<RunningGenotypingAnalysis> list = (List<RunningGenotypingAnalysis>) getServletContext().getAttribute("runningGenoAnalysisList");
+        if (list == null || list.isEmpty()) {
+            return null;
+        } else {
+            Collections.sort(list, new Comparator<RunningGenotypingAnalysis>() {
+                @Override
+                public int compare(RunningGenotypingAnalysis o1, RunningGenotypingAnalysis o2) {
+                    return o1.getStartDate().compareTo(o2.getStartDate());
+                }
+            });
+            return list;
+        }
+    }
+
+    public synchronized void removeRunningAnalysisFromList(String name) {
+        RunningGenotypingAnalysis anaToRemove = new RunningGenotypingAnalysis();
+        anaToRemove.setName(name);
+        List<RunningGenotypingAnalysis> list = (List<RunningGenotypingAnalysis>) getServletContext().getAttribute("runningGenoAnalysisList");
+        list.remove(anaToRemove);
+        getServletContext().removeAttribute("runningGenoAnalysisList");
+        getServletContext().setAttribute("runningGenoAnalysisList", list);
+    }
+
+    public void addRunningAnalysisToList(RunningGenotypingAnalysis analysis) {
+        List<RunningGenotypingAnalysis> list = (List<RunningGenotypingAnalysis>) getServletContext().getAttribute("runningGenoAnalysisList");
+        if (list == null) {
+            list = new ArrayList<RunningGenotypingAnalysis>();
+        }
+        list.add(analysis);
+        getServletContext().removeAttribute("runningGenoAnalysisList");
+        getServletContext().setAttribute("runningGenoAnalysisList", list);
     }
 }

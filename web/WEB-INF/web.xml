@@ -251,6 +251,19 @@
     <servlet-mapping>
         <servlet-name>LibraryFilesService</servlet-name>
         <url-pattern>/Axiom/LibraryFilesService</url-pattern>
+    </servlet-mapping>
+    
+                
+    <!-- -->
+  	 
+    <servlet>
+        <servlet-name>RunningGenoAnalysisService</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.services.RunningGenoAnalysisServiceImpl</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>RunningGenoAnalysisService</servlet-name>
+        <url-pattern>/Axiom/RunningGenoAnalysisService</url-pattern>
     </servlet-mapping>		
   
   

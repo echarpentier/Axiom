@@ -49,7 +49,7 @@
 			<entry key="AxiomPath.temporaryFolder">tmp</entry>
 		
 	<!-- APT Bin Folder -->
-		<entry key="APTbinPath">/media/Disk1To/Axiom/apt-1.14.2-i386-intel-linux/bin</entry>
+		<entry key="APTbinPath">/home/eric/programs/apt-1.15.1-x86_64-intel-linux/bin</entry>
 		
 	<!-- Rscript Bin Folder -->
 		<entry key="RscriptBinPath">/usr/bin/Rscript</entry>

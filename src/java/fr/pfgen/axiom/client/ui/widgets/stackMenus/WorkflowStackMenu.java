@@ -11,6 +11,7 @@ import com.smartgwt.client.widgets.IButton;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
+import fr.pfgen.axiom.client.ui.widgets.tabs.GenotypingWorkflowTab;
 
 public class WorkflowStackMenu extends VLayout{
 
@@ -60,8 +61,12 @@ public class WorkflowStackMenu extends VLayout{
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				// TODO Auto-generated method stub
-				
+				String tabID = "GenoQCTab";
+				if (ClientUtils.tabExists(tabID)){
+					MainArea.getTopTabSet().selectTab(MainArea.getTopTabSet().getTab(tabID));
+				}else{
+					new GenotypingWorkflowTab(tabID);
+				}
 			}
 		});
 		showGenotypeAnalysis.setOverflow(Overflow.VISIBLE);

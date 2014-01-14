@@ -284,7 +284,7 @@ CREATE TABLE IF NOT EXISTS subpedigrees(
 
 	PRIMARY KEY (subpedigree_id),
 	FOREIGN KEY (pedigree_id) REFERENCES pedigrees(pedigree_id) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT UNIQUE (subpedigree_name)
+	CONSTRAINT UNIQUE (subpedigree_name,pedigree_id)
 )
 ENGINE = InnoDB
 ;
