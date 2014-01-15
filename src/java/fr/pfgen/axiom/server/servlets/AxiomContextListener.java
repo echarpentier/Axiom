@@ -227,7 +227,10 @@ public class AxiomContextListener implements ServletContextListener {
 		 * Tables will be created if they do not exist ("CREATE TABLE IF NOT EXISTS", "INSERT IGNORE", etc...)
 		 * The instructions to init the database are in axiom.sql located under folder specified in servlet context
 		 */
-		File sqlFile = new File(axiomFolder, props.getProperty("AxiomPath.DatabaseCreationFile"));
-		DatabaseUtils.initDatabase(connectionPool,sqlFile);
+		//File sqlFile = new File(axiomFolder, props.getProperty("AxiomPath.DatabaseCreationFile"));
+		File sqlFile = new File(ctx.getServletContext().getRealPath("/WEB-INF/resources/sql_scripts/axiom.sql"));
+                DatabaseUtils.initDatabase(connectionPool,sqlFile);
+                
+                
 	}
 }

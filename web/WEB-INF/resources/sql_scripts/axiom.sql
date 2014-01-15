@@ -31,6 +31,20 @@ CREATE TABLE IF NOT EXISTS populations(
 ENGINE = InnoDB
 ;
 
+CREATE TABLE IF NOT EXISTS families(
+    family_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    family_name VARCHAR(50) NOT NULL,
+    created DATETIME NOT NULL,
+    user_id INT UNSIGNED NOT NULL,
+    modified TIMESTAMP,
+
+    PRIMARY KEY (family_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    CONSTRAINT UNIQUE (family_name)
+)
+ENGINE =InnoDB
+;
+
 CREATE TABLE IF NOT EXISTS plates(
 	plate_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	plate_name VARCHAR(100) NOT NULL,
@@ -75,6 +89,20 @@ CREATE TABLE IF NOT EXISTS samples_in_populations(
 	FOREIGN KEY (sample_id) REFERENCES samples(sample_id) ON DELETE CASCADE,
 	FOREIGN KEY (population_id) REFERENCES populations(population_id) ON DELETE CASCADE,
 	CONSTRAINT UNIQUE (sample_id,population_id)
+)
+ENGINE = InnoDB
+;
+
+CREATE TABLE IF NOT EXISTS samples_in_families(
+	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	sample_id INT UNSIGNED NOT NULL,
+	family_id INT UNSIGNED NOT NULL,
+	modified TIMESTAMP,
+
+	PRIMARY KEY (id),
+	FOREIGN KEY (sample_id) REFERENCES samples(sample_id) ON DELETE CASCADE,
+	FOREIGN KEY (family_id) REFERENCES families(family_id) ON DELETE CASCADE,
+	CONSTRAINT UNIQUE (sample_id,family_id)
 )
 ENGINE = InnoDB
 ;
