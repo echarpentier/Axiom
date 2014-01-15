@@ -9,7 +9,7 @@
     <!--Database-->
     <context-param>
         <param-name>configurationFile</param-name>
-        <param-value>ericPc.xml</param-value>
+        <param-value>srv1.xml</param-value>
     </context-param>
 	    
 
