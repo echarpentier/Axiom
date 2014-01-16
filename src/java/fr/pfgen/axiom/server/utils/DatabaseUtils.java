@@ -119,7 +119,7 @@ public class DatabaseUtils {
     	if (dbFieldValueMap!=null && !dbFieldValueMap.isEmpty()){
     		whereClause.append(" WHERE ");
     		for (String tableField : dbFieldValueMap.keySet()) {
-				whereClause.append(tableField+"=\""+dbFieldValueMap.get(tableField)+"\" AND ");
+				whereClause.append(tableField).append("=\"").append(dbFieldValueMap.get(tableField)).append("\" AND ");
 			}
     		whereClause.append("TRUE");
     	}else{
@@ -135,9 +135,9 @@ public class DatabaseUtils {
 			String[] orderByCrits = sortByString.split(",");
 			for (String crit : orderByCrits) {
 				if (crit.startsWith("-")){
-					orderBy.append(crit.replaceFirst("-", "")+" DESC,");
+					orderBy.append(crit.replaceFirst("-", "")).append(" DESC,");
 				}else{
-					orderBy.append(crit+" ASC,");
+					orderBy.append(crit).append(" ASC,");
 				}
 			}
 			if (orderBy.toString().endsWith(",")){

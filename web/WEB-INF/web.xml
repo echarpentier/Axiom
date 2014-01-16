@@ -48,6 +48,18 @@
         <servlet-name>populationService</servlet-name>
         <url-pattern>/Axiom/PopulationsService</url-pattern>
     </servlet-mapping>
+    
+    <!-- -->
+  
+    <servlet>
+        <servlet-name>familiesService</servlet-name>
+        <servlet-class>fr.pfgen.axiom.server.services.FamiliesServiceImpl</servlet-class>
+    </servlet>
+  
+    <servlet-mapping>
+        <servlet-name>familiesService</servlet-name>
+        <url-pattern>/Axiom/FamiliesService</url-pattern>
+    </servlet-mapping>
   
     <!-- -->  
   

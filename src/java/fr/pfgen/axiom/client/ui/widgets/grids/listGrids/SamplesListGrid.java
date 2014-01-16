@@ -41,6 +41,10 @@ public class SamplesListGrid extends ListGrid{
 		populationField.setAlign(Alignment.CENTER);
 		populationField.setType(ListGridFieldType.TEXT);
 		populationField.setWidth(10);
+                ListGridField familyField = new ListGridField("family_names");
+		familyField.setAlign(Alignment.CENTER);
+		familyField.setType(ListGridFieldType.TEXT);
+		familyField.setWidth(10);
 		ListGridField plateField = new ListGridField("plate_name");
 		plateField.setType(ListGridFieldType.TEXT);
 		plateField.setAlign(Alignment.CENTER);
@@ -59,7 +63,7 @@ public class SamplesListGrid extends ListGrid{
 		coordYField.setAlign(Alignment.CENTER);
 		coordYField.setWidth(10);
 		
-		this.setFields(idField,sampleField,populationField,plateField,pathField,coordXField,coordYField);
+		this.setFields(idField,sampleField,populationField,familyField,plateField,pathField,coordXField,coordYField);
 		//this.setDataPageSize(10);
 		
 		

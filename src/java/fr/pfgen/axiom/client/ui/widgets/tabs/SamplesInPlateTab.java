@@ -19,19 +19,23 @@ import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.ButtonItem;
 import com.smartgwt.client.widgets.form.fields.SelectItem;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
+import fr.pfgen.axiom.client.services.FamiliesService;
+import fr.pfgen.axiom.client.services.FamiliesServiceAsync;
 
 public class SamplesInPlateTab {
 
 	private final PopulationsServiceAsync populationService = GWT.create(PopulationsService.class);
+        private final FamiliesServiceAsync familyService = GWT.create(FamiliesService.class);
 
 	public SamplesInPlateTab(String plateName,String tabID){
 
 		final VLayout vlayout = new VLayout(15);
 		vlayout.setWidth("80%");
 		vlayout.setDefaultLayoutAlign(Alignment.CENTER);
-		
+	
 		final VStack vStack = new VStack();  
 		vStack.setShowEdges(true);
 		vStack.setMembersMargin(5);  
@@ -54,22 +58,24 @@ public class SamplesInPlateTab {
 		samplesGrid.setDataFetchMode(FetchMode.BASIC);
 
 		//buttons for removing from or adding samples to populations
-		final DynamicForm form = new DynamicForm();  
-		form.setOverflow(Overflow.VISIBLE);
-		form.setAutoWidth();
-		form.setWrapItemTitles(false);
-		form.setLayoutAlign(Alignment.CENTER);
-		form.setCellPadding(10);
+		final DynamicForm popForm = new DynamicForm(); 
+                popForm.setGroupTitle("Populations");
+                popForm.setIsGroup(true);
+		popForm.setOverflow(Overflow.VISIBLE);
+		popForm.setAutoWidth();
+		popForm.setWrapItemTitles(false);
+		popForm.setLayoutAlign(Alignment.CENTER);
+		popForm.setCellPadding(10);
 		
-		final SelectItem projectCB = new SelectItem();
-		projectCB.setTitle("Select population");  
+		final SelectItem populationCB = new SelectItem();
+		populationCB.setTitle("Select population");  
 		
 		populationService.getPopulationNames(new AsyncCallback<List<String>>() {
 
 			@Override
 			public void onSuccess(List<String> result) {
 				if (result != null && !result.isEmpty()){
-					projectCB.setValueMap(result.toArray(new String[result.size()]));
+					populationCB.setValueMap(result.toArray(new String[result.size()]));
 				}
 			}	
 			
@@ -85,15 +91,15 @@ public class SamplesInPlateTab {
 			
 			@Override
 			public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
-				if (projectCB.getValueAsString()!=null){
+				if (populationCB.getValueAsString()!=null){
 					ListGridRecord[] selectedRecordsAll = samplesGrid.getSelectedRecords();
 					
 					if (selectedRecordsAll.length==0){
-						SC.say("Select records to assign to project");
+						SC.say("Select records to remove from population "+populationCB.getValueAsString());
 					}else{
 						for (ListGridRecord record: selectedRecordsAll) {
 							String pop = record.getAttributeAsString("population_names");
-							pop = pop.replaceAll(projectCB.getValueAsString(), "");
+							pop = pop.replaceAll(populationCB.getValueAsString(), "");
 							record.setAttribute("population_names", pop);
 							samplesGrid.updateData(record);
 						}
@@ -110,17 +116,17 @@ public class SamplesInPlateTab {
 			
 			@Override
 			public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
-				if (projectCB.getValueAsString()!=null){
+				if (populationCB.getValueAsString()!=null){
 					ListGridRecord[] selectedRecordsAll = samplesGrid.getSelectedRecords();
 					if (selectedRecordsAll.length==0){
-						SC.say("Select records to assign to project");
+						SC.say("Select records to assign to population "+populationCB.getValueAsString());
 					}else{
 						for (ListGridRecord record: selectedRecordsAll) {
 							String addedName = new String();
 							if (record.getAttributeAsString("population_names")!=null && !record.getAttributeAsString("population_names").isEmpty()){
-								addedName = projectCB.getValueAsString()+","+record.getAttribute("population_names");
+								addedName = populationCB.getValueAsString()+","+record.getAttribute("population_names");
 							}else{
-								addedName = projectCB.getValueAsString();
+								addedName = populationCB.getValueAsString();
 							}
 							record.setAttribute("population_names", addedName);
 							samplesGrid.updateData(record);
@@ -132,7 +138,7 @@ public class SamplesInPlateTab {
 			}
 		});  
 
-		projectCB.setAlign(Alignment.CENTER);
+		populationCB.setAlign(Alignment.CENTER);
 		removeFromPopButton.setAlign(Alignment.CENTER);
 		removeFromPopButton.setColSpan(2);
 		removeFromPopButton.setIcon("icons/Fall.png");
@@ -141,11 +147,107 @@ public class SamplesInPlateTab {
 		addToPopButton.setColSpan(2);
 		addToPopButton.setIcon("icons/Raise.png");
 		
-		form.setFields(projectCB,addToPopButton,removeFromPopButton);
+		popForm.setFields(populationCB,addToPopButton,removeFromPopButton);
+                
+                //buttons for removing from or adding samples to families
+		final DynamicForm famForm = new DynamicForm(); 
+                famForm.setGroupTitle("Families");
+                famForm.setIsGroup(true);
+		famForm.setOverflow(Overflow.VISIBLE);
+		famForm.setAutoWidth();
+		famForm.setWrapItemTitles(false);
+		famForm.setLayoutAlign(Alignment.CENTER);
+		famForm.setCellPadding(10);
+		
+		final SelectItem familyCB = new SelectItem();
+		familyCB.setTitle("Select family"); 
+                
+                familyService.getFamiliesNames(new AsyncCallback<List<String>>() {
+
+			@Override
+			public void onSuccess(List<String> result) {
+				if (result != null && !result.isEmpty()){
+					familyCB.setValueMap(result.toArray(new String[result.size()]));
+				}
+			}	
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				SC.warn("Can't retreive existing families from server !");
+			}
+		});
+		
+		final ButtonItem removeFromFamButton = new ButtonItem();
+		removeFromFamButton.setTitle("Revome selected samples from family");
+		removeFromFamButton.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
+			
+			@Override
+			public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
+				if (familyCB.getValueAsString()!=null){
+					ListGridRecord[] selectedRecordsAll = samplesGrid.getSelectedRecords();
+					
+					if (selectedRecordsAll.length==0){
+						SC.say("Select records to remove from family "+familyCB.getValueAsString());
+					}else{
+						for (ListGridRecord record: selectedRecordsAll) {
+							String fam = record.getAttributeAsString("family_names");
+							fam = fam.replaceAll(familyCB.getValueAsString(), "");
+							record.setAttribute("family_names", fam);
+							samplesGrid.updateData(record);
+						}
+					}
+				}else{
+					SC.say("Please select family !");
+				}
+			}
+		});
+		
+		final ButtonItem addToFamButton = new ButtonItem();
+		addToFamButton.setTitle("Add selected samples to family");
+		addToFamButton.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
+			
+			@Override
+			public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
+				if (familyCB.getValueAsString()!=null){
+					ListGridRecord[] selectedRecordsAll = samplesGrid.getSelectedRecords();
+					if (selectedRecordsAll.length==0){
+						SC.say("Select records to assign to family "+familyCB.getValueAsString());
+					}else{
+						for (ListGridRecord record: selectedRecordsAll) {
+							String addedName = new String();
+							if (record.getAttributeAsString("family_names")!=null && !record.getAttributeAsString("family_names").isEmpty()){
+								addedName = familyCB.getValueAsString()+","+record.getAttribute("family_names");
+							}else{
+								addedName = familyCB.getValueAsString();
+							}
+							record.setAttribute("family_names", addedName);
+							samplesGrid.updateData(record);
+						}
+					}
+				}else{
+					SC.say("Please select family !");
+				}
+			}
+		});  
+
+		familyCB.setAlign(Alignment.CENTER);
+		removeFromFamButton.setAlign(Alignment.CENTER);
+		removeFromFamButton.setColSpan(2);
+		removeFromFamButton.setIcon("icons/Fall.png");
+
+		addToFamButton.setAlign(Alignment.CENTER);
+		addToFamButton.setColSpan(2);
+		addToFamButton.setIcon("icons/Raise.png");
+		
+		famForm.setFields(familyCB,addToFamButton,removeFromFamButton);
+                
+                HLayout formLayout = new HLayout(20);
+                formLayout.addMember(popForm);
+                formLayout.addMember(famForm);
 		
 		gridLayout.addMember(gridTitle);
 		gridLayout.addMember(samplesGrid);
-		gridLayout.addMember(form);
+		gridLayout.addMember(formLayout);
 		
 		vStack.addMember(gridLayout);
 		

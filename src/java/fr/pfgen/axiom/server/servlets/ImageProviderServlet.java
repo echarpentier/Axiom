@@ -37,7 +37,7 @@ public class ImageProviderServlet extends HttpServlet {
 		
 		if(!file.exists() || !file.isFile()) {
 			imageType = "jpeg";
-			file = new File(appFiles.get("imageNotFound").getAbsolutePath());
+			file = appFiles.get("imageNotFound");
 		} 
 		if (file.getName().toLowerCase().endsWith(".jpg")){
 			imageType = "jpeg";
@@ -51,7 +51,7 @@ public class ImageProviderServlet extends HttpServlet {
 		FileInputStream reader=null;
 		OutputStream out = null;
 		try {
-			reader = new FileInputStream(f);
+			reader = new FileInputStream(file);
 			out = resp.getOutputStream();
 			IOUtils.copyTo(reader, out);
 			out.close();

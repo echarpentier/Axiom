@@ -8,6 +8,7 @@ import fr.pfgen.axiom.shared.records.SampleRecord;
 
 public interface SamplesServiceAsync extends GenericGwtRpcServiceAsync<SampleRecord>{
 	void nbSamplesInPopulation(String projectName, AsyncCallback<Integer> callback) throws IllegalArgumentException;
+        void nbSamplesInFamily(String familyName, AsyncCallback<Integer> callback) throws IllegalArgumentException;
 	void nbSamplesInPlate(String plateName, AsyncCallback<Integer> callback) throws IllegalArgumentException;
 	void nbSamplesInProjectWithoutQC(String projectName, AsyncCallback<Integer> callback) throws IllegalArgumentException;
 	void nbSamplesInPlateWithoutQC(String plateName, AsyncCallback<Integer> callback) throws IllegalArgumentException;

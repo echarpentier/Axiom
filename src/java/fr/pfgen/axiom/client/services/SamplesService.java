@@ -8,6 +8,7 @@ import fr.pfgen.axiom.shared.records.SampleRecord;
 @RemoteServiceRelativePath ("SamplesService")
 public interface SamplesService extends GenericGwtRpcService<SampleRecord> {
 	int nbSamplesInPopulation(String projectName);
+        int nbSamplesInFamily(String familyName);
 	int nbSamplesInPlate(String plateName);
 	int nbSamplesInProjectWithoutQC(String projectName);
 	int nbSamplesInPlateWithoutQC(String plateName);

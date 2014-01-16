@@ -22,10 +22,13 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
+import fr.pfgen.axiom.client.services.FamiliesService;
+import fr.pfgen.axiom.client.services.FamiliesServiceAsync;
 
 public class SamplesTab {
 
 	private final PopulationsServiceAsync populationService = GWT.create(PopulationsService.class);
+        private final FamiliesServiceAsync familyService = GWT.create(FamiliesService.class);
 
 	public SamplesTab(String tabID){
 
@@ -81,7 +84,7 @@ public class SamplesTab {
 		Criteria criteria = new Criteria();
 		criteria.addCriteria("noPopulation", "null");
 		samplesWoPopulationGrid.setCriteria(criteria);
-		samplesWoPopulationGrid.setEmptyMessage("No samples found without project assigned");
+		samplesWoPopulationGrid.setEmptyMessage("No samples found without population assigned");
 		
 		gridLayout2.addMember(gridTitle2);
 		gridLayout2.addMember(samplesWoPopulationGrid);
@@ -100,15 +103,15 @@ public class SamplesTab {
 		form.setLayoutAlign(Alignment.CENTER);
 		form.setCellPadding(10);
 		
-		final SelectItem projectCB = new SelectItem();
-		projectCB.setTitle("Select population");  
+		final SelectItem populationCB = new SelectItem();
+		populationCB.setTitle("Select population");  
 		
 		populationService.getPopulationNames(new AsyncCallback<List<String>>() {
 
 			@Override
 			public void onSuccess(List<String> result) {
 				if (result != null && !result.isEmpty()){
-					projectCB.setValueMap(result.toArray(new String[result.size()]));
+					populationCB.setValueMap(result.toArray(new String[result.size()]));
 				}
 			}	
 			
@@ -124,20 +127,17 @@ public class SamplesTab {
 			
 			@Override
 			public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
-				if (projectCB.getValueAsString()!=null){
+				if (populationCB.getValueAsString()!=null){
 					ListGridRecord[] selectedRecordsAll = samplesGrid.getSelectedRecords();
 					ListGridRecord[] selectedRecordsNoPop = samplesWoPopulationGrid.getSelectedRecords();
-					//List<ListGridRecord> both = new ArrayList<ListGridRecord>(selectedRecordsAll.length + selectedRecordsNoPop.length);
-				    //Collections.addAll(both, selectedRecordsAll);
-				    //Collections.addAll(both, selectedRecordsNoPop);
-				    //ListGridRecord[] selectedRecords = both.toArray(new ListGridRecord[] {});
+					
 					if (selectedRecordsAll.length==0 && selectedRecordsNoPop.length==0){
-						SC.say("Select records to assign to project");
+						SC.say("Select records to remove from population "+populationCB.getValueAsString());
 					}else{
 						if (selectedRecordsAll.length>0){
 							for (ListGridRecord record: selectedRecordsAll) {
 								String pop = record.getAttributeAsString("population_names");
-								pop = pop.replaceAll(projectCB.getValueAsString(), "");
+								pop = pop.replaceAll(populationCB.getValueAsString(), "");
 								record.setAttribute("population_names", pop);
 								samplesGrid.updateData(record);
 							}
@@ -145,7 +145,7 @@ public class SamplesTab {
 						if (selectedRecordsNoPop.length>0){
 							for (ListGridRecord record: selectedRecordsNoPop) {
 								String pop = record.getAttributeAsString("population_names");
-								pop = pop.replaceAll(projectCB.getValueAsString(), "");
+								pop = pop.replaceAll(populationCB.getValueAsString(), "");
 							
 								record.setAttribute("population_names", pop);
 								samplesWoPopulationGrid.updateData(record);
@@ -164,19 +164,19 @@ public class SamplesTab {
 			
 			@Override
 			public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
-				if (projectCB.getValueAsString()!=null){
+				if (populationCB.getValueAsString()!=null){
 					ListGridRecord[] selectedRecordsAll = samplesGrid.getSelectedRecords();
 					ListGridRecord[] selectedRecordsNoPop = samplesWoPopulationGrid.getSelectedRecords();
 					if (selectedRecordsAll.length==0 && selectedRecordsNoPop.length==0){
-						SC.say("Select records to assign to project");
+						SC.say("Select records to assign to population "+populationCB.getValueAsString());
 					}else{
 						if (selectedRecordsAll.length!=0){
 							for (ListGridRecord record: selectedRecordsAll) {
 								String addedName = new String();
 								if (record.getAttributeAsString("population_names")!=null && !record.getAttributeAsString("population_names").isEmpty()){
-									addedName = projectCB.getValueAsString()+","+record.getAttribute("population_names");
+									addedName = populationCB.getValueAsString()+","+record.getAttribute("population_names");
 								}else{
-									addedName = projectCB.getValueAsString();
+									addedName = populationCB.getValueAsString();
 								}
 								record.setAttribute("population_names", addedName);
 								samplesGrid.updateData(record);
@@ -186,9 +186,9 @@ public class SamplesTab {
 							for (ListGridRecord record: selectedRecordsNoPop) {
 								String addedName = new String();
 								if (record.getAttributeAsString("population_names")!=null && !record.getAttributeAsString("population_names").isEmpty()){
-									addedName = projectCB.getValueAsString()+","+record.getAttribute("population_names");
+									addedName = populationCB.getValueAsString()+","+record.getAttribute("population_names");
 								}else{
-									addedName = projectCB.getValueAsString();
+									addedName = populationCB.getValueAsString();
 								}
 								record.setAttribute("population_names", addedName);
 								samplesWoPopulationGrid.updateData(record);
@@ -210,7 +210,7 @@ public class SamplesTab {
 				ListGridRecord[] selectedRecordsAll = samplesGrid.getSelectedRecords();
 				ListGridRecord[] selectedRecordsNoPop = samplesWoPopulationGrid.getSelectedRecords();
 				if (selectedRecordsAll.length==0 && selectedRecordsNoPop.length==0){
-					SC.say("Select records to assign to project");
+					SC.say("Select records to remove from all populations");
 				}else{
 					if (selectedRecordsAll.length>0){
 						for (ListGridRecord record: selectedRecordsAll) {
@@ -241,7 +241,7 @@ public class SamplesTab {
 			}
 		});
 		
-		projectCB.setAlign(Alignment.CENTER);
+		populationCB.setAlign(Alignment.CENTER);
 		removeFromPopButton.setAlign(Alignment.CENTER);
 		removeFromPopButton.setColSpan(2);
 		removeFromPopButton.setIcon("icons/Fall.png");
@@ -258,12 +258,10 @@ public class SamplesTab {
 		refreshButton.setColSpan(2);
 		refreshButton.setIcon("icons/Refresh.png");
 		
-		form.setFields(projectCB,addToPopButton,removeFromPopButton,removeFromAllPopButton,refreshButton);
+		form.setFields(populationCB,addToPopButton,removeFromPopButton,removeFromAllPopButton,refreshButton);
 		
-		//add the hlayout to vlayout
 		vlayout.addMember(hlayout);
 		vlayout.addMember(form);
-		//vlayout.addMember(vStack);
 
 		/*
 		 * Add layout to mainArea tab

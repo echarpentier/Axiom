@@ -1,5 +1,11 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package fr.pfgen.axiom.server.database;
 
+import fr.pfgen.axiom.server.utils.SQLUtils;
+import fr.pfgen.axiom.shared.records.FamilyRecord;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,13 +16,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import fr.pfgen.axiom.server.utils.SQLUtils;
-import fr.pfgen.axiom.shared.records.PopulationRecord;
+/**
+ *
+ * @author eric
+ */
+public class FamiliesTable {
 
-public class PopulationsTable {
-
-    public static List<String> getPopulationNames(ConnectionPool pool) {
-        List<String> populationList = new ArrayList<String>();
+    public static List<String> getFamiliesNames(ConnectionPool pool) {
+        List<String> familiesNames = new ArrayList<String>();
         Statement stmt = null;
         ResultSet rs = null;
         Connection con = null;
@@ -24,10 +31,10 @@ public class PopulationsTable {
         try {
             con = pool.getConnection();
             stmt = con.createStatement();
-            String query = "SELECT population_name FROM populations ORDER BY created DESC";
+            String query = "SELECT family_name FROM families ORDER BY created DESC";
             rs = stmt.executeQuery(query);
             while (rs.next()) {
-                populationList.add(rs.getString("population_name"));
+                familiesNames.add(rs.getString("family_name"));
             }
             rs.close();
             stmt.close();
@@ -38,12 +45,12 @@ public class PopulationsTable {
             SQLUtils.safeClose(stmt);
             pool.close(con);
         }
-        return populationList;
+        return familiesNames;
     }
-
-    public static List<PopulationRecord> getPopulations(ConnectionPool pool, Integer startRow, Integer endRow, final String sortBy, Map<String, String> filterCriteria) {
-        List<PopulationRecord> list = new ArrayList<PopulationRecord>();
-        String query = "SELECT * FROM populations ";
+    
+    public static List<FamilyRecord> getFamilies(ConnectionPool pool, Integer startRow, Integer endRow, final String sortBy, Map<String, String> filterCriteria) {
+        List<FamilyRecord> list = new ArrayList<FamilyRecord>();
+        String query = "SELECT * FROM families ";
         String critToString = "WHERE ";
         String rowsToString = "LIMIT ";
         String orderByString = "ORDER BY ";
@@ -51,10 +58,10 @@ public class PopulationsTable {
         //filter criterias
         if (filterCriteria != null && filterCriteria.size() > 0) {
             List<String> critList = new ArrayList<String>();
-            if (filterCriteria.containsKey("population_id")) {
-                critList.add("population_id=" + filterCriteria.get("population_id"));
-            } else if (filterCriteria.containsKey("population_name")) {
-                critList.add("population_name=\"" + filterCriteria.get("population_name") + "\"");
+            if (filterCriteria.containsKey("family_id")) {
+                critList.add("family_id=" + filterCriteria.get("family_id"));
+            } else if (filterCriteria.containsKey("family_name")) {
+                critList.add("family_name=\"" + filterCriteria.get("family_name") + "\"");
             } else if (filterCriteria.containsKey("user")) {
                 String[] user = filterCriteria.get("user").split("\\s");
                 critList.add("user_id=(SELECT users.user_id FROM users JOIN populations ON users.user_id=populations.user_id WHERE firstname=\"" + user[0] + "\" AND lastname=\"" + user[1] + "\")");
@@ -107,10 +114,11 @@ public class PopulationsTable {
             stmt = con.createStatement();
             rs = stmt.executeQuery(query);
             while (rs.next()) {
-                PopulationRecord record = new PopulationRecord();
-                record.setId(rs.getInt("population_id"));
-                record.setPopulationName(rs.getString("population_name"));
+                FamilyRecord record = new FamilyRecord();
+                record.setId(rs.getInt("family_id"));
+                record.setName(rs.getString("family_name"));
                 record.setCreated(rs.getDate("created"));
+                record.setPropositus(rs.getString("propositus"));
 
                 ps_u.setInt(1, rs.getInt("user_id"));
                 rs_u = ps_u.executeQuery();
@@ -134,10 +142,10 @@ public class PopulationsTable {
         return list;
     }
 
-    public static PopulationRecord addPopulation(ConnectionPool pool, PopulationRecord newPopulation) {
-        PopulationRecord record = new PopulationRecord();
-        String[] user = newPopulation.getUser().split("\\s");
-        int returnedKeyNewPopulation = -1;
+    public static FamilyRecord addFamily(ConnectionPool pool, FamilyRecord newFamily) {
+        FamilyRecord record = new FamilyRecord();
+        String[] user = newFamily.getUser().split("\\s");
+        int returnedKeyNewFamily = -1;
 
         Connection con = null;
         PreparedStatement ps = null;
@@ -145,17 +153,18 @@ public class PopulationsTable {
 
         try {
             con = pool.getConnection();
-            String query = "INSERT IGNORE INTO populations SET population_name=?,created=NOW(),user_id=(SELECT user_id FROM users WHERE firstname=? AND lastname=?);";
+            String query = "INSERT IGNORE INTO families SET family_name=?,created=NOW(),user_id=(SELECT user_id FROM users WHERE firstname=? AND lastname=?),propositus=?;";
             ps = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, newPopulation.getPopulationName());
+            ps.setString(1, newFamily.getName());
             ps.setString(2, user[0]);
             ps.setString(3, user[1]);
+            ps.setString(4, newFamily.getPropositus());
             ps.executeUpdate();
             rsk = ps.getGeneratedKeys();
             if (rsk.next()) {
-                returnedKeyNewPopulation = rsk.getInt(1);
+                returnedKeyNewFamily = rsk.getInt(1);
             } else {
-                throw new RuntimeException("Cannot insert new population");
+                throw new RuntimeException("Cannot insert new family");
             }
             rsk.close();
             ps.close();
@@ -165,19 +174,20 @@ public class PopulationsTable {
             SQLUtils.safeClose(rsk);
             SQLUtils.safeClose(ps);
         }
-        if (returnedKeyNewPopulation > -1) {
+        if (returnedKeyNewFamily > -1) {
             Statement stmt = null;
             ResultSet rs = null;
             try {
                 stmt = con.createStatement();
-                String query = "SELECT * FROM populations WHERE population_id=" + returnedKeyNewPopulation + ";";
+                String query = "SELECT * FROM families WHERE family_id=" + returnedKeyNewFamily + ";";
                 rs = stmt.executeQuery(query);
                 if (rs.next()) {
                     do {
-                        record.setId(rs.getInt("population_id"));
+                        record.setId(rs.getInt("family_id"));
                         record.setCreated(rs.getDate("created"));
-                        record.setPopulationName(newPopulation.getPopulationName());
-                        record.setUser(newPopulation.getUser());
+                        record.setName(newFamily.getName());
+                        record.setUser(newFamily.getUser());
+                        record.setPropositus(newFamily.getPropositus());
                     } while (rs.next());
                 } else {
                     rs.close();
@@ -200,9 +210,9 @@ public class PopulationsTable {
         return record;
     }
 
-    public static void removePopulation(ConnectionPool pool, PopulationRecord record) {
+    public static void removeFamily(ConnectionPool pool, FamilyRecord record) {
 
-        String query = "DELETE FROM populations WHERE population_id=?";
+        String query = "DELETE FROM families WHERE family_id=?";
         PreparedStatement ps = null;
         Connection con = null;
 
@@ -221,7 +231,7 @@ public class PopulationsTable {
         }
     }
 
-    public static PopulationRecord updatePopulation(ConnectionPool pool, PopulationRecord record) {
+    public static FamilyRecord updateFamily(ConnectionPool pool, FamilyRecord record) {
         //TODO
         return record;
     }

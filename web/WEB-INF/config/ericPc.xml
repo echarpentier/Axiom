@@ -24,26 +24,13 @@
 		
 		<!-- Application Paths under main application path -->
       	  	<entry key="AxiomPath.ArrayImagePath">ArrayImages</entry>
-      	  	<entry key="AxiomPath.ImageNotFoundPath">INF.jpg</entry>
         	<entry key="AxiomPath.AnalysisPath">Analysis</entry>
         
 		<!-- Affymetrix Library Files -->
-			<!-- 
-			<entry key="AxiomPath.AffxLibraryFiles">LibraryFiles/axiomgwas_husnp_1_r4</entry>
-			-->
 			<entry key="AxiomPath.AffxLibraryFilesFolder">LibraryFiles</entry>
 			
 		<!-- Affymetrix Annotation Files -->
-			<!-- 
-			<entry key="AxiomPath.AffxAnnotationFile">AnnotationFiles/Axiom_GW_Hu_SNP.na32.annot.csv</entry>
-			-->
 			<entry key="AxiomPath.AffxAnnotationFilesFolder">AnnotationFiles</entry>
-				
-		<!-- R Scripts Folder -->
-			<entry key="AxiomPath.Rscripts">R_scripts</entry>
-			
-		<!-- Database Creation File -->
-			<entry key="AxiomPath.DatabaseCreationFile">axiom.sql</entry>
 			
 		<!-- Temporary Folder -->
 			<entry key="AxiomPath.temporaryFolder">tmp</entry>

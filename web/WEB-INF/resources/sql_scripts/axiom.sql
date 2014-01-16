@@ -31,20 +31,6 @@ CREATE TABLE IF NOT EXISTS populations(
 ENGINE = InnoDB
 ;
 
-CREATE TABLE IF NOT EXISTS families(
-    family_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    family_name VARCHAR(50) NOT NULL,
-    created DATETIME NOT NULL,
-    user_id INT UNSIGNED NOT NULL,
-    modified TIMESTAMP,
-
-    PRIMARY KEY (family_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
-    CONSTRAINT UNIQUE (family_name)
-)
-ENGINE =InnoDB
-;
-
 CREATE TABLE IF NOT EXISTS plates(
 	plate_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	plate_name VARCHAR(100) NOT NULL,
@@ -92,6 +78,22 @@ CREATE TABLE IF NOT EXISTS samples_in_populations(
 )
 ENGINE = InnoDB
 ;
+
+CREATE TABLE IF NOT EXISTS families(
+    family_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    family_name VARCHAR(50) NOT NULL,
+    propositus VARCHAR(50),
+    created DATETIME NOT NULL,
+    user_id INT UNSIGNED NOT NULL,
+    modified TIMESTAMP,
+
+    PRIMARY KEY (family_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    CONSTRAINT UNIQUE (family_name)
+)
+ENGINE =InnoDB
+;
+
 
 CREATE TABLE IF NOT EXISTS samples_in_families(
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,

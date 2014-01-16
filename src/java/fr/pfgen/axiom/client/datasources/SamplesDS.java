@@ -35,6 +35,13 @@ public class SamplesDS extends GenericGwtRpcDataSource<SampleRecord, ListGridRec
             }
         }
         to.setPopulationNames(l);
+        List<String> f = new ArrayList<String>();
+        for (String famName : from.getAttributeAsString("family_names").split(",")) {
+            if (famName != null && !famName.isEmpty()) {
+                f.add(famName);
+            }
+        }
+        to.setFamilyNames(f);
         to.setPlateName(from.getAttributeAsString("plate_name"));
         to.setSamplePath(from.getAttribute("sample_path"));
         to.setCoordX(from.getAttributeAsInt("plate_coordX"));
@@ -48,10 +55,18 @@ public class SamplesDS extends GenericGwtRpcDataSource<SampleRecord, ListGridRec
         if (from.getPopulationNames() != null) {
             StringBuilder popNames = new StringBuilder();
             for (String popName : from.getPopulationNames()) {
-                popNames.append(popName + ",");
+                popNames.append(popName).append(",");
             }
             String s = popNames.toString().replaceAll(",$", "");
             to.setAttribute("population_names", s);
+        }
+        if (from.getFamilyNames()!= null) {
+            StringBuilder famNames = new StringBuilder();
+            for (String famName : from.getFamilyNames()) {
+                famNames.append(famName).append(",");
+            }
+            String s = famNames.toString().replaceAll(",$", "");
+            to.setAttribute("family_names", s);
         }
         to.setAttribute("plate_name", from.getPlateName());
         to.setAttribute("sample_path", from.getSamplePath());
@@ -74,6 +89,9 @@ public class SamplesDS extends GenericGwtRpcDataSource<SampleRecord, ListGridRec
         field.setRequired(true);
         fields.add(field);
         field = new DataSourceTextField("population_names", "IN POPULATIONS");
+        field.setRequired(false);
+        fields.add(field);
+        field = new DataSourceTextField("family_names", "IN FAMILY");
         field.setRequired(false);
         fields.add(field);
         field = new DataSourceTextField("plate_name", "IN PLATE");

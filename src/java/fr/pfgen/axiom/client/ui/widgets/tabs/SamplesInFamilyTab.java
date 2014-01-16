@@ -1,8 +1,8 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package fr.pfgen.axiom.client.ui.widgets.tabs;
-
-import fr.pfgen.axiom.client.ui.widgets.MainArea;
-import fr.pfgen.axiom.client.ui.widgets.grids.listGrids.PlatesListGrid;
-import fr.pfgen.axiom.client.ui.widgets.grids.listGrids.SamplesListGrid;
 
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.types.Alignment;
@@ -17,10 +17,17 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
+import fr.pfgen.axiom.client.ui.widgets.MainArea;
+import fr.pfgen.axiom.client.ui.widgets.grids.listGrids.PlatesListGrid;
+import fr.pfgen.axiom.client.ui.widgets.grids.listGrids.SamplesListGrid;
 
-public class PlatesInPopulationTab {
+/**
+ *
+ * @author eric
+ */
+public class SamplesInFamilyTab {
 
-    public PlatesInPopulationTab(final String populationName, String tabID) {
+    public SamplesInFamilyTab(final String familyName, String tabID) {
 
         HLayout hlayout = new HLayout(15);
         hlayout.setWidth("80%");
@@ -40,14 +47,14 @@ public class PlatesInPopulationTab {
 
         final Label platesGridTitle = new Label();
         platesGridTitle.setHeight(20);
-        platesGridTitle.setContents("Plates&nbsp;for&nbsp;which&nbsp;(some&nbsp;or&nbsp;all)&nbsp;samples&nbsp;are&nbsp;in&nbsp;population&nbsp;" + populationName.replaceAll("\\s", "_"));
+        platesGridTitle.setContents("Plates&nbsp;for&nbsp;which&nbsp;(some&nbsp;or&nbsp;all)&nbsp;samples&nbsp;are&nbsp;in&nbsp;family&nbsp;" + familyName.replaceAll("\\s", "_"));
         platesGridTitle.setStyleName("textTitle");
 
         PlatesListGrid platesGrid = new PlatesListGrid();
         Criteria platesCriteria = new Criteria();
-        platesCriteria.addCriteria("population_name", populationName);
+        platesCriteria.addCriteria("family_name", familyName);
         platesGrid.setCriteria(platesCriteria);
-        platesGrid.setEmptyMessage("No plates found for this population");
+        platesGrid.setEmptyMessage("No plates found for this family");
 
         platesGridLayout.addMember(platesGridTitle);
         platesGridLayout.addMember(platesGrid);
@@ -66,26 +73,26 @@ public class PlatesInPopulationTab {
 
         final Label samplesGridTitle = new Label();
         samplesGridTitle.setHeight(20);
-        samplesGridTitle.setContents("Samples&nbsp;in&nbsp;population&nbsp;" + populationName.replaceAll("\\s", "&nbsp;"));
+        samplesGridTitle.setContents("Samples&nbsp;in&nbsp;family&nbsp;" + familyName.replaceAll("\\s", "&nbsp;"));
         samplesGridTitle.setStyleName("textTitle");
 
         final SamplesListGrid samplesGrid = new SamplesListGrid();
         Criteria samplesCriteria = new Criteria();
-        samplesCriteria.addCriteria("population_name", populationName);
+        samplesCriteria.addCriteria("family_name", familyName);
         samplesGrid.setCriteria(samplesCriteria);
-        samplesGrid.setEmptyMessage("No samples found for this population");
+        samplesGrid.setEmptyMessage("No samples found for this family");
 
-        final IButton removeButton = new IButton("Remove selected samples from population", new ClickHandler() {
+        final IButton removeButton = new IButton("Remove selected samples from family", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 ListGridRecord[] selectedRecords = samplesGrid.getSelectedRecords();
                 if (selectedRecords.length > 0) {
                     for (ListGridRecord record : selectedRecords) {
-                        String pop = record.getAttributeAsString("population_names");
+                        String fam = record.getAttributeAsString("family_names");
                         //System.out.println(pop);
-                        pop = pop.replaceAll(populationName, "");
+                        fam = fam.replaceAll(familyName, "");
 
-                        record.setAttribute("population_names", pop);
+                        record.setAttribute("family_names", fam);
                         samplesGrid.updateData(record);
                     }
                     //SC.say("Selected records have been removed from population");
@@ -110,6 +117,6 @@ public class PlatesInPopulationTab {
         /*
          * Add layout to mainArea tab
          */
-        MainArea.addTabToTopTabset("Population: " + populationName, tabID, hlayout, true);
+        MainArea.addTabToTopTabset("Family: " + familyName, tabID, hlayout, true);
     }
 }

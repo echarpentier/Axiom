@@ -177,8 +177,10 @@ public class AxiomContextListener implements ServletContextListener {
 			throw new RuntimeException("Can't execute "+RScriptBin.getAbsolutePath());
 		}
 		
-		final File rScriptsFolder = new File(axiomFolder, props.getProperty("AxiomPath.Rscripts"));
-		if (!rScriptsFolder.exists()){
+		//final File rScriptsFolder = new File(axiomFolder, props.getProperty("AxiomPath.Rscripts"));
+		final File rScriptsFolder = new File(ctx.getServletContext().getRealPath("/WEB-INF/resources/r_scripts"));
+                
+                if (!rScriptsFolder.exists()){
 			throw new RuntimeException(rScriptsFolder.getAbsolutePath()+" doesn't exist");
 		}else if (!rScriptsFolder.canRead() || !rScriptsFolder.canExecute()){
 			throw new RuntimeException("Can't read or execute: "+rScriptsFolder.getAbsolutePath());
@@ -199,8 +201,9 @@ public class AxiomContextListener implements ServletContextListener {
 			}
 		}
 		
-		final File imageNotFoundFile = new File(axiomFolder, props.getProperty("AxiomPath.ImageNotFoundPath"));
-		
+		//final File imageNotFoundFile = new File(axiomFolder, props.getProperty("AxiomPath.ImageNotFoundPath"));
+		final File imageNotFoundFile = new File(ctx.getServletContext().getRealPath("/images/INF.png"));
+                
 		ctx.getServletContext().setAttribute("MaxGenoAnalysis", Integer.parseInt(props.getProperty("MaxGenoAnalysis")));
 		ctx.getServletContext().setAttribute("MaxQCAnalysis", Integer.parseInt(props.getProperty("MaxQCAnalysis")));
 		
